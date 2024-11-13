@@ -1,0 +1,64 @@
+body, html, #root, .App, .main-window {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}
+
+/* Закрепляем navbar сверху */
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.main-window {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: Arial, sans-serif;
+  background-color: #272727;
+  margin: 0;
+  padding: 0;
+}
+
+.main-header {
+  background-color: #363636;
+  color: white;
+  padding: 20px;
+  text-align: center;
+  width: 100%; /* Заголовок по ширине всего окна */
+}
+
+.content {
+  max-width: 600px;
+  margin: 20px;
+  text-align: left;
+}
+
+.content h1, h2 {
+  margin: 0;
+  padding: 10px 0;
+  color: #ffffff;
+}
+
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.content li {
+  margin: 10px 0;
+  padding: 10px;
+  background: #f9f9f9;
+  border-radius: 8px;
+  transform: scaleX(1);
+  transition: background-color 0.75s, transform 1s;;
+}
+
+.content li:hover {
+  background-color: #363636;
+  color: #ffffff;
+  transform: scaleX(1.1);
+  transition: background-color 0.5s, transform 0.5s;;
+}
