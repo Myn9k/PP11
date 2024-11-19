@@ -4,11 +4,11 @@ function ProfilePage() {
   return (
     <div className="container text-light mt-5">
       <h1>Профиль</h1>
-      <p>Эта страница предназначена для отображения кого-то</p>
+      <p>Добро пожаловать в ваш профиль!</p>
       <ul>
-        <li><strong>Имя:</strong> Ваше имя</li>
-        <li><strong>Email:</strong> example@example.com</li>
-        <li><strong>Статус:</strong> Активный</li>
+        <li><strong>Имя:</strong> Имя пользователя</li>
+        <li><strong>Email:</strong> user@example.com</li>
+        <li><strong>Статус:</strong> Активен</li>
       </ul>
     </div>
   );

@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import CryptoJS from 'crypto-js'; // Импорт библиотеки
 
 function AuthWindow({ setAuthStatus }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState(''); // Поле для подтверждения пароля
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [isRegistering, setIsRegistering] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
@@ -13,7 +14,6 @@ function AuthWindow({ setAuthStatus }) {
     e.preventDefault();
     setErrorMessage('');
 
-    // Проверяем совпадение паролей при регистрации
     if (isRegistering && password !== confirmPassword) {
       setErrorMessage('Пароли не совпадают');
       return;
@@ -21,8 +21,10 @@ function AuthWindow({ setAuthStatus }) {
 
     setLoading(true);
 
+    // Хэшируем пароль перед отправкой
+    const hashedPassword = CryptoJS.SHA256(password).toString();
     const url = isRegistering ? '/api/register' : '/api/login';
-    const body = { email, password };
+    const body = { email, password: hashedPassword };
 
     try {
       const response = await fetch(url, {
@@ -49,13 +51,11 @@ function AuthWindow({ setAuthStatus }) {
   return (
     <div className="auth-window container mt-5 p-4 bg-dark text-light rounded shadow-lg">
       <h2 className="text-center mb-4">{isRegistering ? 'Регистрация' : 'Авторизация'}</h2>
-
       {errorMessage && (
         <div className="alert alert-danger text-center" role="alert">
           {errorMessage}
         </div>
       )}
-
       <form onSubmit={handleSubmit}>
         <div className="form-group mb-3">
           <label htmlFor="email">Email</label>
@@ -81,8 +81,6 @@ function AuthWindow({ setAuthStatus }) {
             required
           />
         </div>
-
-        {/* Поле подтверждения пароля отображается только при регистрации */}
         {isRegistering && (
           <div className="form-group mb-3">
             <label htmlFor="confirmPassword">Подтвердите пароль</label>
@@ -97,30 +95,22 @@ function AuthWindow({ setAuthStatus }) {
             />
           </div>
         )}
-
-        <button
-          type="submit"
-          className="btn btn-secondary w-100"
-          disabled={loading}
-        >
+        <button type="submit" className="btn btn-secondary w-100" disabled={loading}>
           {loading ? 'Загрузка...' : isRegistering ? 'Зарегистрироваться' : 'Войти'}
         </button>
       </form>
-
       <div className="text-center mt-3">
         <button
           type="button"
           className="btn btn-link text-decoration-none"
           onClick={() => {
             setIsRegistering(!isRegistering);
-            setErrorMessage(''); // Сбрасываем ошибки при переключении режима
+            setErrorMessage('');
             setPassword('');
-            setConfirmPassword(''); // Очищаем поля пароля
+            setConfirmPassword('');
           }}
         >
-          {isRegistering
-            ? 'Уже есть аккаунт? Войти'
-            : 'Нет аккаунта? Зарегистрироваться'}
+          {isRegistering ? 'Уже есть аккаунт? Войти' : 'Нет аккаунта? Зарегистрироваться'}
         </button>
       </div>
     </div>
