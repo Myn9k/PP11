@@ -1,92 +1,130 @@
 import React, { useState } from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css'; // Для стилей Bootstrap
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 function AuthWindow({ setAuthStatus }) {
-  // Состояния для email, password и флага регистрации
-  const [email, setEmail] = useState(''); // Стейт для хранения email
-  const [password, setPassword] = useState(''); // Стейт для хранения пароля
-  const [isRegistering, setIsRegistering] = useState(false); // Флаг для переключения между регистрацией и авторизацией
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState(''); // Поле для подтверждения пароля
+  const [isRegistering, setIsRegistering] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
-  // Обработчик отправки формы
   const handleSubmit = async (e) => {
-    e.preventDefault(); // Отменяем стандартное поведение формы (перезагрузку страницы)
+    e.preventDefault();
+    setErrorMessage('');
 
-    // Определяем URL для запроса в зависимости от того, в режиме ли мы регистрации или авторизации
+    // Проверяем совпадение паролей при регистрации
+    if (isRegistering && password !== confirmPassword) {
+      setErrorMessage('Пароли не совпадают');
+      return;
+    }
+
+    setLoading(true);
+
     const url = isRegistering ? '/api/register' : '/api/login';
+    const body = { email, password };
 
-    // Тело запроса с данными для авторизации или регистрации
-    const body = {
-      email,
-      password,
-    };
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
 
-    // Отправляем запрос на сервер
-    const response = await fetch(url, {
-      method: 'POST', // Используем POST-запрос
-      headers: {
-        'Content-Type': 'application/json', // Указываем, что тело запроса в формате JSON
-      },
-      body: JSON.stringify(body), // Преобразуем объект в строку JSON
-    });
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Не удалось выполнить запрос');
+      }
 
-    // Если запрос успешен, сохраняем токен в localStorage и обновляем состояние авторизации
-    if (response.ok) {
-      const data = await response.json(); // Получаем данные из ответа
-      localStorage.setItem('token', data.token); // Сохраняем токен в localStorage
-      setAuthStatus(true); // Устанавливаем статус авторизации в true
-    } else {
-      // Если возникла ошибка, показываем alert
-      alert('Ошибка авторизации или регистрации');
+      const data = await response.json();
+      localStorage.setItem('token', data.token);
+      setAuthStatus(true);
+    } catch (error) {
+      setErrorMessage(error.message || 'Произошла ошибка');
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="auth-window container">
-      {/* Заголовок, который меняется в зависимости от режима (регистрация или авторизация) */}
-      <h2>{isRegistering ? 'Регистрация' : 'Авторизация'}</h2>
+    <div className="auth-window container mt-5 p-4 bg-dark text-light rounded shadow-lg">
+      <h2 className="text-center mb-4">{isRegistering ? 'Регистрация' : 'Авторизация'}</h2>
 
-      {/* Форма для ввода данных */}
+      {errorMessage && (
+        <div className="alert alert-danger text-center" role="alert">
+          {errorMessage}
+        </div>
+      )}
+
       <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          {/* Поле для ввода email */}
-          <label htmlFor="email" style={{ color: 'white' }}>Email</label>
+        <div className="form-group mb-3">
+          <label htmlFor="email">Email</label>
           <input
             type="email"
             id="email"
             className="form-control"
-            value={email} // Значение поля равно состоянию email
-            onChange={(e) => setEmail(e.target.value)} // Обновляем состояние email при изменении
-            required // Обязательное поле
+            placeholder="Введите ваш email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
           />
         </div>
-        <div className="form-group">
-          {/* Поле для ввода пароля */}
-          <label htmlFor="password" style={{ color: 'white' }}>Пароль</label>
+        <div className="form-group mb-3">
+          <label htmlFor="password">Пароль</label>
           <input
             type="password"
             id="password"
             className="form-control"
-            value={password} // Значение поля равно состоянию password
-            onChange={(e) => setPassword(e.target.value)} // Обновляем состояние password при изменении
-            required // Обязательное поле
+            placeholder="Введите ваш пароль"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
           />
         </div>
 
-        {/* Кнопка для отправки формы */}
-        <button type="submit" className="btn btn-secondary">
-          {isRegistering ? 'Зарегистрироваться' : 'Войти'} {/* Текст кнопки меняется в зависимости от режима */}
+        {/* Поле подтверждения пароля отображается только при регистрации */}
+        {isRegistering && (
+          <div className="form-group mb-3">
+            <label htmlFor="confirmPassword">Подтвердите пароль</label>
+            <input
+              type="password"
+              id="confirmPassword"
+              className="form-control"
+              placeholder="Повторите ваш пароль"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              required
+            />
+          </div>
+        )}
+
+        <button
+          type="submit"
+          className="btn btn-secondary w-100"
+          disabled={loading}
+        >
+          {loading ? 'Загрузка...' : isRegistering ? 'Зарегистрироваться' : 'Войти'}
         </button>
       </form>
 
-      {/* Кнопка для переключения между режимами авторизации и регистрации */}
-      <button
-        className="btn btn-link mt-3"
-        onClick={() => setIsRegistering(!isRegistering)} // Переключаем состояние isRegistering
-      >
-        {isRegistering ? 'Есть аккаунт? Войти' : 'Нет аккаунта? Регистрация'} {/* Текст кнопки зависит от состояния */}
-      </button>
+      <div className="text-center mt-3">
+        <button
+          type="button"
+          className="btn btn-link text-decoration-none"
+          onClick={() => {
+            setIsRegistering(!isRegistering);
+            setErrorMessage(''); // Сбрасываем ошибки при переключении режима
+            setPassword('');
+            setConfirmPassword(''); // Очищаем поля пароля
+          }}
+        >
+          {isRegistering
+            ? 'Уже есть аккаунт? Войти'
+            : 'Нет аккаунта? Зарегистрироваться'}
+        </button>
+      </div>
     </div>
   );
 }
 
-export default AuthWindow; // Экспортируем компонент для использования в других частях приложения
+export default AuthWindow;
