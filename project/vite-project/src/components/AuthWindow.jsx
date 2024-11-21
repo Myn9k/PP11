@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import CryptoJS from 'crypto-js'; // Импорт библиотеки
+import './css/AuthWindow.css';
 
 function AuthWindow({ setAuthStatus }) {
   const [email, setEmail] = useState('');
@@ -49,7 +50,7 @@ function AuthWindow({ setAuthStatus }) {
   };
 
   return (
-    <div className="auth-window container mt-5 p-4 bg-dark text-light rounded shadow-lg">
+    <div className="auth-window container mt-5 p-4 text-light rounded shadow-lg">
       <h2 className="text-center mb-4">{isRegistering ? 'Регистрация' : 'Авторизация'}</h2>
       {errorMessage && (
         <div className="alert alert-danger text-center" role="alert">
