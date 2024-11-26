@@ -52,14 +52,18 @@ function MainWindow() {
               {authStatus && (
                 <>
                   <li className="nav-item">
-                    <Link className="nav-link" to="/profile">
+                    <a
+                      className="nav-link"
+                      href="/profile">
                       Профиль
-                    </Link>
+                    </a>
                   </li>
                   <li className="nav-item">
-                    <Link className="nav-link" to="/about">
+                    <a
+                      className="nav-link"
+                      href="/about">
                       О нас
-                    </Link>
+                    </a>
                   </li>
                   <li className="nav-item">
                     <button
@@ -104,10 +108,10 @@ function MainWindow() {
         {/* Правая часть с кнопками */}
         <div className="rightContent">
           <div className="center-content">
-            <button className="btn btn-primary btn-lg main-button" onClick={handleAuthClick}>ВОЙТИ</button>
-            <div className="sub-buttons">
-              <button className="btn btn-secondary btn-sm">автовход</button>
-              <button className="btn btn-secondary btn-sm">Сохранить пароль</button>
+            <div className="button-container">
+              <button className="main-button" onClick={handleAuthClick}>ВОЙТИ</button>
+              <button className="secondary-button main-button">автовход</button>
+              <button className="secondary-button main-button">Сохранить пароль</button>
             </div>
           </div>
         </div>

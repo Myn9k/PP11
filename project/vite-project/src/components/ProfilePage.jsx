@@ -1,17 +1,56 @@
-import React from 'react';
+import React, { useEffect, useState } from "react";
+import { loadUserProfile } from "./scripts/profile"; // Импорт функции
+import './css/Profile.css';
 
-function ProfilePage() {
+const ProfilePage = () => {
+  const [profile, setProfile] = useState(null); // Состояние для данных профиля
+  const [error, setError] = useState(null); // Состояние для ошибки
+
+  useEffect(() => {
+    const token = localStorage.getItem("token"); // Получаем токен из локального хранилища
+
+    if (!token) {
+      setError("Вы не авторизованы. Пожалуйста, войдите в систему.");
+      return;
+    }
+
+    // Загрузка данных профиля
+    loadUserProfile(token)
+      .then(data => {
+        if (data) {
+          setProfile(data); // Устанавливаем данные профиля
+        } else {
+          setError("Не удалось загрузить данные профиля.");
+        }
+      })
+      .catch(() => {
+        setError("Произошла ошибка при загрузке данных.");
+      });
+  }, []);
+
+  if (error) {
+    return <div className="error-message">{error}</div>;
+  }
+
+  if (!profile) {
+    return <div>Загрузка профиля...</div>;
+  }
+
   return (
-    <div className="container text-light mt-5">
-      <h1>Профиль</h1>
-      <p>Добро пожаловать в ваш профиль!</p>
-      <ul>
-        <li><strong>Имя:</strong> Имя пользователя</li>
-        <li><strong>Email:</strong> user@example.com</li>
-        <li><strong>Статус:</strong> Активен</li>
-      </ul>
+    <div className="profile-page">
+      <div className="profile-container">
+        <div className="profile-header">
+          <h1 className="profile-title">Профиль</h1>
+        </div>
+        <div className="profile-info">
+          <p>
+            <strong>Электронная почта:</strong> <span id="email">{profile.email}</span>
+          </p>
+          <button className="main-button">Выйти</button>
+        </div>
+      </div>
     </div>
   );
-}
+};
 
 export default ProfilePage;

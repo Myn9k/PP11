@@ -36,46 +36,10 @@ body, html, #root, .App {
   margin-bottom: 30px;
 }
 
-/* Кнопка Войти */
-.main-button {
-  background-color: #6eb3ff; /* Голубой фон */
-  border: none;
-  border-radius: 10px;
-  padding: 15px 50px;
-  font-size: 1.5rem;
-  font-weight: bold;
-  color: #ffffff; /* Белый текст */
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
-  transition: transform 0.3s ease, background-color 0.3s ease;
-}
-
-/* Эффект при наведении */
-.main-button:hover {
-  transform: scale(1.1);
-  background-color: #5aa3e6; /* Более тёмный голубой при наведении */
-}
-
-/* Кнопки в блоке автовхода и сохранить пароль */
-.sub-buttons .btn {
-  background-color: #6eb3ff; /* Голубой фон */
-  border: none;
-  color: #ffffff; /* Белый текст */
-  border-radius: 10px;
-  padding: 10px 30px;
-  font-size: 1rem;
-  font-weight: bold;
-  transition: background-color 0.3s ease;
-}
-
-/* Эффект при наведении */
-.sub-buttons .btn:hover {
-  background-color: #5aa3e6; /* Более тёмный голубой при наведении */
-}
-
 
 /* Информационные блоки (пузырьки) */
 .bubble {
-  background-color: rgba(165, 235, 245, 0.8);
+  background: linear-gradient(to top, #a1c4fd, #c2e9fb);
   border-radius: 15px;
   padding: 20px;
   max-width: 600px;
@@ -175,4 +139,45 @@ body, html, #root, .App {
   margin-top: 10px;
   display: block;
   width: 100%;
+}
+
+.button-container {
+  display: flex; /* Включаем Flexbox */
+  flex-direction: column; /* Располагаем элементы сверху вниз */
+  align-items: center; /* Выравниваем кнопки по центру */
+}
+
+.main-button {
+  background: linear-gradient(to bottom, #a1c4fd, #c2e9fb); /* Градиент для основной кнопки */
+  color: white;
+  font-size: 24px;
+  font-weight: bold;
+  padding: 15px 40px;
+  border: none;
+  border-radius: 15px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.3); /* Тень */
+  text-transform: uppercase;
+  cursor: pointer;
+  margin-bottom: 20px;
+}
+
+.main-button:hover {
+  background: linear-gradient(to bottom, #91b4ed, #b2d9eb); /* Более тёмный оттенок на ховер */
+}
+
+.secondary-button {
+  background: rgba(255, 255, 255, 0.8); /* Полупрозрачный фон */
+  color: #333;
+  font-size: 18px;
+  padding: 10px 30px;
+  border: none;
+  border-radius: 10px;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  margin: 10px 0;
+}
+
+.secondary-button:hover {
+  background: rgba(255, 255, 255, 1); /* Более плотный белый цвет */
+  color: #000;
 }
