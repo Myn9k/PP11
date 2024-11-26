@@ -44,6 +44,9 @@ const ProfilePage = () => {
         </div>
         <div className="profile-info">
           <p>
+            <strong>Никнейм:</strong> <span id="username">{profile.username}</span>
+          </p>
+          <p>
             <strong>Электронная почта:</strong> <span id="email">{profile.email}</span>
           </p>
           <button className="main-button">Выйти</button>

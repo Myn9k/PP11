@@ -9,7 +9,7 @@ const path = require('path');
 const app = express();
 const SECRET_KEY = '121212312414'; // Используйте надежный секретный ключ для токенов
 
-// База данных в памяти (в продакшене используйте реальную базу данных)
+// База данных в памяти
 const database = {};
 
 // Middleware
@@ -19,15 +19,21 @@ app.use(express.static(path.join(__dirname, 'dist')));
 
 // Регистрация пользователя
 app.post('/api/register', async (req, res) => {
-  const { email, password } = req.body;
+  const { email, password, username } = req.body;
+
+  if (!username || username.trim() === '') {
+    return res.status(400).json({ message: 'Имя пользователя обязательно' });
+  }
+
   if (database[email]) {
     return res.status(400).json({ message: 'Пользователь уже существует' });
   }
-  // Хэширование пароля
+
   const passwordHash = await bcrypt.hash(password, 10);
-  database[email] = { email, passwordHash };
+  database[email] = { email, passwordHash, username }; // Сохраняем username
   res.status(200).json({ message: 'Регистрация прошла успешно' });
 });
+
 
 // Авторизация пользователя
 app.post('/api/login', async (req, res) => {
@@ -44,12 +50,12 @@ app.post('/api/login', async (req, res) => {
     return res.status(401).json({ message: 'Неверный пароль' });
   }
 
-  // Генерация JWT токена
-  const token = jwt.sign({ email }, SECRET_KEY, { expiresIn: '1h' });
+  // Генерация JWT токена с email и username
+  const token = jwt.sign({ email, username: user.username }, SECRET_KEY, { expiresIn: '1h' });
   res.status(200).json({ message: 'Авторизация успешна', token });
 });
 
-// Проверка токена
+// Проверка токена и получение профиля
 app.get('/api/profile', (req, res) => {
   const token = req.headers.authorization?.split(' ')[1]; // "Bearer <token>"
   if (!token) {
@@ -58,11 +64,16 @@ app.get('/api/profile', (req, res) => {
 
   try {
     const decoded = jwt.verify(token, SECRET_KEY);
-    res.status(200).json({ message: 'Доступ разрешен', email: decoded.email });
+    res.status(200).json({ 
+      message: 'Доступ разрешен', 
+      email: decoded.email, 
+      username: decoded.username // Возвращаем username
+    });
   } catch (error) {
     res.status(401).json({ message: 'Недействительный токен' });
   }
 });
+
 
 // Обработка маршрутов Vite
 app.get('*', (req, res) => {

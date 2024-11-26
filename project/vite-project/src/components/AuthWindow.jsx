@@ -7,6 +7,7 @@ function AuthWindow({ setAuthStatus }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [username, setUsername] = useState('');
   const [isRegistering, setIsRegistering] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
@@ -25,7 +26,9 @@ function AuthWindow({ setAuthStatus }) {
     // Хэшируем пароль перед отправкой
     const hashedPassword = CryptoJS.SHA256(password).toString();
     const url = isRegistering ? '/api/register' : '/api/login';
-    const body = { email, password: hashedPassword };
+    const body = isRegistering
+      ? { email, password: hashedPassword, username } // Добавляем username при регистрации
+      : { email, password: hashedPassword };
 
     try {
       const response = await fetch(url, {
@@ -58,6 +61,20 @@ function AuthWindow({ setAuthStatus }) {
         </div>
       )}
       <form onSubmit={handleSubmit}>
+        {isRegistering && (
+          <div className="form-group mb-3">
+            <label htmlFor="username">Имя пользователя</label>
+            <input
+              type="text"
+              id="username"
+              className="form-control"
+              placeholder="Введите имя пользователя"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
+            />
+          </div>
+        )}
         <div className="form-group mb-3">
           <label htmlFor="email">Email</label>
           <input
@@ -109,6 +126,7 @@ function AuthWindow({ setAuthStatus }) {
             setErrorMessage('');
             setPassword('');
             setConfirmPassword('');
+            setUsername(''); // Сбрасываем username
           }}
         >
           {isRegistering ? 'Уже есть аккаунт? Войти' : 'Нет аккаунта? Зарегистрироваться'}
