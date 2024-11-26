@@ -74,6 +74,93 @@ app.get('/api/profile', (req, res) => {
   }
 });
 
+// Получение списка всех пользователей
+app.get('/api/users', (req, res) => {
+  const token = req.headers.authorization?.split(' ')[1];
+  if (!token) {
+    return res.status(401).json({ message: 'Токен не предоставлен' });
+  }
+
+  try {
+    const decoded = jwt.verify(token, SECRET_KEY);
+    res.status(200).json({ users: Object.values(database) });
+  } catch (error) {
+    res.status(401).json({ message: 'Недействительный токен' });
+  }
+});
+
+// Удаление пользователя по email
+app.delete('/api/users/:email', (req, res) => {
+  const token = req.headers.authorization?.split(' ')[1];
+  if (!token) {
+    return res.status(401).json({ message: 'Токен не предоставлен' });
+  }
+
+  try {
+    const decoded = jwt.verify(token, SECRET_KEY);
+    const { email } = req.params;
+
+    if (!database[email]) {
+      return res.status(404).json({ message: 'Пользователь не найден' });
+    }
+
+    delete database[email];
+    res.status(200).json({ message: 'Пользователь удален' });
+  } catch (error) {
+    res.status(401).json({ message: 'Недействительный токен' });
+  }
+});
+
+// Редактирование пользователя по email
+app.put('/api/users/:email', async (req, res) => {
+  const token = req.headers.authorization?.split(' ')[1];
+  if (!token) {
+    return res.status(401).json({ message: 'Токен не предоставлен' });
+  }
+
+  try {
+    const decoded = jwt.verify(token, SECRET_KEY);
+    const { email } = req.params;
+    const { username, password } = req.body;
+
+    const user = database[email];
+    if (!user) {
+      return res.status(404).json({ message: 'Пользователь не найден' });
+    }
+
+    if (username) {
+      user.username = username;
+    }
+
+    if (password) {
+      user.passwordHash = await bcrypt.hash(password, 10);
+    }
+
+    res.status(200).json({ message: 'Пользователь обновлен', user });
+  } catch (error) {
+    res.status(401).json({ message: 'Недействительный токен' });
+  }
+});
+
+// Добавление нового пользователя
+app.post('/api/users', async (req, res) => {
+  const { email, username, password } = req.body;
+
+  if (!email || !username || !password) {
+    return res.status(400).json({ message: 'Все поля обязательны' });
+  }
+
+  if (database[email]) {
+    return res.status(400).json({ message: 'Пользователь с таким email уже существует' });
+  }
+
+  const passwordHash = await bcrypt.hash(password, 10);
+  database[email] = { email, username, passwordHash };
+
+  res.status(200).json({ message: 'Пользователь добавлен' });
+});
+
+
 
 // Обработка маршрутов Vite
 app.get('*', (req, res) => {
