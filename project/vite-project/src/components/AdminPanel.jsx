@@ -7,10 +7,12 @@ const AdminPanel = () => {
   const [users, setUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
 
+  // Загружаем пользователей при первом рендере
   useEffect(() => {
     fetchUsers();
   }, []);
 
+  // Получаем список пользователей
   const fetchUsers = async () => {
     const token = localStorage.getItem('token');
     const response = await fetch('http://localhost:5000/api/users', {
@@ -20,14 +22,22 @@ const AdminPanel = () => {
     setUsers(data.users);
   };
 
+  // Добавляем нового пользователя
   const handleAddUser = (user) => {
-    setUsers([...users, user]);
+    setUsers((prevUsers) => [...prevUsers, user]);
   };
 
-  const handleDeleteUser = (email) => {
+  // Удаляем пользователя
+  const handleDeleteUser = async (email) => {
+    const token = localStorage.getItem('token');
+    await fetch(`http://localhost:5000/api/users/${email}`, {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${token}` },
+    });
     setUsers(users.filter(user => user.email !== email));
   };
 
+  // Редактируем пользователя
   const handleEditUser = (updatedUser) => {
     setUsers(users.map(user => user.email === updatedUser.email ? updatedUser : user));
   };

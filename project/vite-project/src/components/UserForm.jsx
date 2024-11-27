@@ -3,8 +3,8 @@ import './css/Admin.css';
 
 const UserForm = ({ user = null, onSubmit }) => {
   const [email, setEmail] = useState(user?.email || '');
+  const [password, setPassword] = useState(user?.passwordHash || '');
   const [username, setUsername] = useState(user?.username || '');
-  const [password, setPassword] = useState('');
 
   useEffect(() => {
     if (user) {
@@ -15,34 +15,27 @@ const UserForm = ({ user = null, onSubmit }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const newUser = { email, username, password };
-    if (user) {
-      // Edit user
-      await fetch(`http://localhost:5000/api/users/${user.email}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-        body: JSON.stringify(newUser),
-      });
-      onSubmit(newUser);
-    } else {
-      // Add user
-      await fetch('http://localhost:5000/api/users', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-        body: JSON.stringify(newUser),
-      });
-      onSubmit(newUser);
-    }
+    const newUser = { email, password, username };
+    const apiUrl = user 
+      ? `http://localhost:5000/api/users/${user.email}` 
+      : 'http://localhost:5000/api/users';
+
+    const method = user ? 'PUT' : 'POST';
+
+    await fetch(apiUrl, {
+      method,
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
+      body: JSON.stringify(newUser),
+    });
+
+    onSubmit(newUser);
   };
 
   return (
-    <form onSubmit={handleSubmit} className='forms'>
+    <form onSubmit={handleSubmit} className="forms">
       <input
         type="text"
         placeholder="Username"

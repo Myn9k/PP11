@@ -9,7 +9,7 @@ const path = require('path');
 const app = express();
 const SECRET_KEY = '121212312414'; // Используйте надежный секретный ключ для токенов
 
-// База данных в памяти
+// База данных в памяти (для демонстрации)
 const database = {};
 
 // Middleware
@@ -30,28 +30,36 @@ app.post('/api/register', async (req, res) => {
   }
 
   const passwordHash = await bcrypt.hash(password, 10);
-  database[email] = { email, passwordHash, username }; // Сохраняем username
+  database[email] = { email, passwordHash, username };
+
+  console.log(database[email]);
+  console.log(password);
+  
   res.status(200).json({ message: 'Регистрация прошла успешно' });
 });
-
 
 // Авторизация пользователя
 app.post('/api/login', async (req, res) => {
   const { email, password } = req.body;
+
+  if (!email || !password) {
+    return res.status(400).json({ message: 'Email и пароль обязательны' });
+  }
+
   const user = database[email];
 
   if (!user) {
-    return res.status(404).json({ message: 'Пользователь не найден' });
+    return res.status(401).json({ message: 'Пользователь не найден' });
   }
 
-  // Проверка пароля
-  const isPasswordValid = await bcrypt.compare(password, user.passwordHash);
-  if (!isPasswordValid) {
+  const isMatch = await bcrypt.compare(password, user.passwordHash); // Сравнение пароля
+
+  if (!isMatch) {
     return res.status(401).json({ message: 'Неверный пароль' });
   }
 
-  // Генерация JWT токена с email и username
-  const token = jwt.sign({ email, username: user.username }, SECRET_KEY, { expiresIn: '1h' });
+  // Если пароль верный, генерируем токен
+  const token = jwt.sign({ email: user.email }, SECRET_KEY, { expiresIn: '1h' });
   res.status(200).json({ message: 'Авторизация успешна', token });
 });
 
@@ -64,9 +72,9 @@ app.get('/api/profile', (req, res) => {
 
   try {
     const decoded = jwt.verify(token, SECRET_KEY);
-    res.status(200).json({ 
-      message: 'Доступ разрешен', 
-      email: decoded.email, 
+    res.status(200).json({
+      message: 'Доступ разрешен',
+      email: decoded.email,
       username: decoded.username // Возвращаем username
     });
   } catch (error) {
@@ -136,6 +144,9 @@ app.put('/api/users/:email', async (req, res) => {
       user.passwordHash = await bcrypt.hash(password, 10);
     }
 
+    database[email] = user;
+    
+    console.log(database[email]);
     res.status(200).json({ message: 'Пользователь обновлен', user });
   } catch (error) {
     res.status(401).json({ message: 'Недействительный токен' });
@@ -144,7 +155,7 @@ app.put('/api/users/:email', async (req, res) => {
 
 // Добавление нового пользователя
 app.post('/api/users', async (req, res) => {
-  const { email, username, password } = req.body;
+  const { email, password, username } = req.body;
 
   if (!email || !username || !password) {
     return res.status(400).json({ message: 'Все поля обязательны' });
@@ -155,14 +166,14 @@ app.post('/api/users', async (req, res) => {
   }
 
   const passwordHash = await bcrypt.hash(password, 10);
-  database[email] = { email, username, passwordHash };
+  database[email] = { email, passwordHash, username };
 
+  console.log(password);
+  console.log(database[email]);
   res.status(200).json({ message: 'Пользователь добавлен' });
 });
 
-
-
-// Обработка маршрутов Vite
+// Обработка маршрутов Vite (для фронтенд-приложения)
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });

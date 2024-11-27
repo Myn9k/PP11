@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import CryptoJS from 'crypto-js'; // Импорт библиотеки
 import './css/AuthWindow.css';
 
 function AuthWindow({ setAuthStatus }) {
@@ -23,12 +22,10 @@ function AuthWindow({ setAuthStatus }) {
 
     setLoading(true);
 
-    // Хэшируем пароль перед отправкой
-    const hashedPassword = CryptoJS.SHA256(password).toString();
     const url = isRegistering ? '/api/register' : '/api/login';
     const body = isRegistering
-      ? { email, password: hashedPassword, username } // Добавляем username при регистрации
-      : { email, password: hashedPassword };
+      ? { email, password: password, username } // Добавляем username при регистрации
+      : { email, password: password };
 
     try {
       const response = await fetch(url, {
