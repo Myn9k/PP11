@@ -32,10 +32,11 @@ app.post('/api/register', async (req, res) => {
   const passwordHash = await bcrypt.hash(password, 10);
   database[email] = { email, passwordHash, username };
 
+  // Генерация токена
+  const token = jwt.sign({ email, username }, SECRET_KEY, { expiresIn: '1h' });
+
   console.log(database[email]);
-  console.log(password);
-  
-  res.status(200).json({ message: 'Регистрация прошла успешно' });
+  res.status(200).json({ message: 'Регистрация прошла успешно', token });
 });
 
 // Авторизация пользователя
@@ -59,7 +60,7 @@ app.post('/api/login', async (req, res) => {
   }
 
   // Если пароль верный, генерируем токен
-  const token = jwt.sign({ email: user.email }, SECRET_KEY, { expiresIn: '1h' });
+  const token = jwt.sign({ email: user.email, username: user.username }, SECRET_KEY, { expiresIn: '1h' });
   res.status(200).json({ message: 'Авторизация успешна', token });
 });
 
