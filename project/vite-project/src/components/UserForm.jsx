@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import './css/Admin.css';
 
 const UserForm = ({ user = null, onSubmit }) => {
   const [email, setEmail] = useState(user?.email || '');
@@ -41,7 +42,7 @@ const UserForm = ({ user = null, onSubmit }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} className='forms'>
       <input
         type="text"
         placeholder="Username"

@@ -3,6 +3,7 @@ import { Route, Routes, Link, useLocation } from 'react-router-dom';
 import AuthWindow from './AuthWindow';
 import ProfilePage from './ProfilePage';
 import AboutPage from './AboutPage';
+import AdminPanel from './AdminPanel';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './css/MainWindow.css';
 
@@ -29,6 +30,11 @@ function MainWindow() {
 
   // Проверка, является ли текущий маршрут специальным
   const isSpecialRoute = location.pathname === '/profile' || location.pathname === '/about';
+
+  // Если маршрут "/admin", отображаем только админку
+  if (location.pathname === '/admin') {
+    return <AdminPanel />;
+  }
 
   return (
     <div className="main-window">
@@ -169,6 +175,7 @@ function MainWindow() {
       <Routes>
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/about" element={<AboutPage />} />
+        <Route path="/admin" element={<AdminPanel />} />
       </Routes>
     </div>
   );

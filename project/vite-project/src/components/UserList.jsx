@@ -1,5 +1,6 @@
 import React from 'react';
 import UserRow from './UserRow';
+import './css/Admin.css';
 
 const UserList = ({ users, onDelete, onEdit }) => {
   return (

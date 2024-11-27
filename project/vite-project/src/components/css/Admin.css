@@ -1,0 +1,68 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f8ff; /* Светло-голубой */
+    color: #003366; /* Темно-синий */
+  }
+  
+  h1 {
+    color: #003366; /* Темно-синий */
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    background-color: #e6f7ff; /* Бледно-голубой */
+  }
+  
+  th, td {
+    padding: 10px;
+    border: 1px solid #b3d9ff; /* Светло-синий */
+    text-align: left;
+  }
+  
+  th {
+    background-color: #003366; /* Темно-синий */
+    color: white;
+  }
+  
+  tr:nth-child(even) {
+    background-color: #f0f8ff; /* Светло-голубой */
+  }
+  
+  button {
+    background-color: #007acc; /* Ярко-синий */
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  button:hover {
+    background-color: #005c99; /* Темнее для эффекта наведения */
+  }
+  
+  .forms {
+    margin: 20px;
+    padding: 20px;
+    background-color: #e6f7ff; /* Бледно-голубой */
+    border: 1px solid #b3d9ff;
+    border-radius: 5px;
+  }
+  
+  input {
+    width: calc(100% - 20px);
+    padding: 8px;
+    margin-bottom: 10px;
+    border: 1px solid #b3d9ff;
+    border-radius: 4px;
+  }
+  
+  input:focus {
+    outline: none;
+    border-color: #007acc;
+  }
+  

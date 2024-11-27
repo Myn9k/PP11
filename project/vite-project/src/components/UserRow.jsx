@@ -1,4 +1,5 @@
 import React from 'react';
+import './css/Admin.css';
 
 const UserRow = ({ user, onDelete, onEdit }) => {
   const handleDelete = () => {
