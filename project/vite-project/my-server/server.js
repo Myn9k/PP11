@@ -174,6 +174,57 @@ app.post('/api/users', async (req, res) => {
   res.status(200).json({ message: 'Пользователь добавлен' });
 });
 
+// Добавляем поле для хранения устройств в базе данных
+const devices = {};
+
+// Получение списка устройств пользователя
+app.get('/api/devices', (req, res) => {
+  const token = req.headers.authorization?.split(' ')[1];
+  if (!token) {
+    return res.status(401).json({ message: 'Токен не предоставлен' });
+  }
+
+  try {
+    const decoded = jwt.verify(token, SECRET_KEY);
+    const userDevices = devices[decoded.email] || [];
+    res.status(200).json({ devices: userDevices });
+  } catch (error) {
+    res.status(401).json({ message: 'Недействительный токен' });
+  }
+});
+
+// Добавление нового устройства
+app.post('/api/devices', (req, res) => {
+  const token = req.headers.authorization?.split(' ')[1];
+  if (!token) {
+    return res.status(401).json({ message: 'Токен не предоставлен' });
+  }
+
+  try {
+    const decoded = jwt.verify(token, SECRET_KEY);
+    const { name } = req.body;
+
+    if (!name || name.trim() === '') {
+      return res.status(400).json({ message: 'Название устройства обязательно' });
+    }
+
+    if (!devices[decoded.email]) {
+      devices[decoded.email] = [];
+    }
+
+    const newDevice = {
+      id: Date.now(), // Уникальный ID устройства
+      name,
+      addedAt: new Date().toISOString(),
+    };
+
+    devices[decoded.email].push(newDevice);
+    res.status(200).json({ message: 'Устройство добавлено', device: newDevice });
+  } catch (error) {
+    res.status(401).json({ message: 'Недействительный токен' });
+  }
+});
+
 // Обработка маршрутов Vite (для фронтенд-приложения)
 app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'dist', 'index.html'));

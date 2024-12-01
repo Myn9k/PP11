@@ -4,6 +4,7 @@ import AuthWindow from './AuthWindow';
 import ProfilePage from './ProfilePage';
 import AboutPage from './AboutPage';
 import AdminPanel from './AdminPanel';
+import Device from './Device';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './css/MainWindow.css';
 
@@ -29,7 +30,7 @@ function MainWindow() {
   };
 
   // Проверка, является ли текущий маршрут специальным
-  const isSpecialRoute = location.pathname === '/profile' || location.pathname === '/about';
+  const isSpecialRoute = location.pathname === '/profile' || location.pathname === '/about'|| location.pathname === '/devices';
 
   // Если маршрут "/admin", отображаем только админку
   if (location.pathname === '/admin') {
@@ -77,6 +78,11 @@ function MainWindow() {
                   <li className="nav-item">
                     <Link className="nav-link" to="/about">
                       О нас
+                    </Link>
+                  </li>
+                  <li className="nav-item">
+                    <Link className="nav-link" to="/devices">
+                      Мои устройства
                     </Link>
                   </li>
                   <li className="nav-item">
@@ -176,6 +182,7 @@ function MainWindow() {
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/admin" element={<AdminPanel />} />
+        <Route path="/devices" element={<Device />} />
       </Routes>
     </div>
   );
