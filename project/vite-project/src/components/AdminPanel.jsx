@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import UserList from './UserList';
 import UserForm from './UserForm';
-import './css/Admin.css';
 
 const AdminPanel = () => {
   const [users, setUsers] = useState([]);

@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { loadUserProfile } from "./scripts/profile"; // Импорт функции
-import './css/Profile.css';
+import { loadUserProfile } from "../components/scripts/profile"; // Импорт функции
 
 const ProfilePage = () => {
   const [profile, setProfile] = useState(null); // Состояние для данных профиля

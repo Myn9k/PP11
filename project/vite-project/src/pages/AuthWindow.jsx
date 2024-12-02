@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import './css/AuthWindow.css';
+import { useNavigate } from 'react-router-dom';
 
 function AuthWindow({ setAuthStatus }) {
   const [email, setEmail] = useState('');
@@ -10,6 +9,7 @@ function AuthWindow({ setAuthStatus }) {
   const [isRegistering, setIsRegistering] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const navigate = useNavigate(); // Используем useNavigate для переходов
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -22,9 +22,9 @@ function AuthWindow({ setAuthStatus }) {
 
     setLoading(true);
 
-    const url = isRegistering ? '/api/register' : '/api/login';
+    const url = isRegistering ? 'http://localhost:5000/api/register' : 'http://localhost:5000/api/login';
     const body = isRegistering
-      ? { email, password: password, username } // Добавляем username при регистрации
+      ? { email, password: password, username }
       : { email, password: password };
 
     try {
@@ -42,6 +42,9 @@ function AuthWindow({ setAuthStatus }) {
       const data = await response.json();
       localStorage.setItem('token', data.token);
       setAuthStatus(true);
+
+      // Переход на главную страницу с передачей authStatus
+      navigate('/', { state: { authStatus: true } });
     } catch (error) {
       setErrorMessage(error.message || 'Произошла ошибка');
     } finally {
@@ -123,7 +126,7 @@ function AuthWindow({ setAuthStatus }) {
             setErrorMessage('');
             setPassword('');
             setConfirmPassword('');
-            setUsername(''); // Сбрасываем username
+            setUsername('');
           }}
         >
           {isRegistering ? 'Уже есть аккаунт? Войти' : 'Нет аккаунта? Зарегистрироваться'}
