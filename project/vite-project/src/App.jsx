@@ -6,6 +6,7 @@ import AboutPage from './pages/AboutPage';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Navbar from './components/NavBar';
 import AuthWindow from './pages/AuthWindow';
+import AdminPanel from './pages/AdminPanel';
 import SocialAccountPage from './pages/SocialAccountPage';
 
 function App() {
@@ -22,6 +23,7 @@ function App() {
           {/* Передача setAuthStatus в AuthWindow */}
           <Route path="/register" element={<AuthWindow setAuthStatus={setAuthStatus} />} />
           <Route path="/social" element={<SocialAccountPage />} />
+          <Route path="/admin" element={<AdminPanel />} />
         </Routes>
       </div>
     </Router>
